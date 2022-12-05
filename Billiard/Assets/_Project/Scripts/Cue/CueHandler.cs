@@ -16,11 +16,12 @@ namespace _Project.Scripts.Cue
         private bool _isMovable;
 
         public event Action<float> OnForceScale;
+        public event Action<Transform> OnRotate;
         public event Action OnShot;
 
         private void Awake()
         {
-            GameManager.Instance.Spawner.OnBallSpawnComplete += ball => _cueBall = ball.transform;
+            GameManager.Instance.Spawner.OnCueBallSpawnComplete += ball => _cueBall = ball.transform;
             GameManager.Instance.OnGameStateChanged += state => _isMovable = state == GameState.Play;
         }
 
@@ -91,6 +92,7 @@ namespace _Project.Scripts.Cue
         {
             transform.RotateAround(
                 _cueBall.position, Vector3.up, Time.deltaTime * sensitivity * direction);
+            OnRotate?.Invoke(tip);
         }
 
         private bool ViewPortCheck()

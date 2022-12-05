@@ -11,7 +11,10 @@ namespace _Project.Scripts.Balls
         [SerializeField] private bool yellow;
         [SerializeField] private bool red;
 
+        private bool _moving;
+        
         public event Action OnWon;
+        public event Action OnStop;
 
         private void Update()
         {
@@ -20,10 +23,15 @@ namespace _Project.Scripts.Balls
                 OnWon?.Invoke();
             }
             
-            if (rb.velocity == Vector3.zero)
+            if (rb.velocity != Vector3.zero)
+                _moving = true;
+
+            if (rb.velocity == Vector3.zero && _moving)
             {
+                _moving = false;
                 yellow = false;
                 red = false;
+                OnStop?.Invoke();
             }
             else
                 CheckWin();

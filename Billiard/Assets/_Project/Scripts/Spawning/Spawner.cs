@@ -22,7 +22,9 @@ namespace _Project.Scripts.Spawning
         private GameObject _redBall;
         private GameObject _cue;
 
-        public event Action<CueBall> OnBallSpawnComplete;
+        public event Action<CueBall> OnCueBallSpawnComplete;
+        public event Action<Ball> OnYellowBallSpawnComplete;
+        public event Action<Ball> OnRedBallSpawnComplete;
         public event Action<CueHandler> OnCueSpawnComplete;
 
         private void Awake()
@@ -56,7 +58,9 @@ namespace _Project.Scripts.Spawning
             _redBall = Instantiate(redBallPrefab, redSpawnPos, Quaternion.identity);
             _cue = Instantiate(cuePrefab, cueSpawnPos, cuePrefab.transform.rotation);
             
-            OnBallSpawnComplete?.Invoke(_whiteBall.GetComponent<CueBall>());
+            OnCueBallSpawnComplete?.Invoke(_whiteBall.GetComponent<CueBall>());
+            OnYellowBallSpawnComplete?.Invoke(_yellowBall.GetComponent<Ball>());
+            OnRedBallSpawnComplete?.Invoke(_redBall.GetComponent<Ball>());
             OnCueSpawnComplete?.Invoke(_cue.GetComponent<CueHandler>());
         }
     }

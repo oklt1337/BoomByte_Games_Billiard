@@ -10,7 +10,7 @@ namespace _Project.Scripts.Cameras
 
         private void Awake()
         {
-            GameManager.Instance.Spawner.OnBallSpawnComplete += SetFollowTarget;
+            GameManager.Instance.Spawner.OnCueBallSpawnComplete += SetFollowTarget;
         }
 
         private void LateUpdate()

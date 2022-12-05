@@ -1,4 +1,5 @@
 using System;
+using _Project.Scripts.Balls;
 using _Project.Scripts.Save;
 using _Project.Scripts.Spawning;
 using _Project.Scripts.UI.Game;
@@ -19,6 +20,7 @@ namespace _Project.Scripts
         public static GameManager Instance { get; private set; }
         
         [SerializeField] private Spawner spawner;
+        [SerializeField] private BallManager ballManager;
         [SerializeField] private GameCanvasManager gameCanvasManager;
         
         private GameState _gameState;
@@ -31,6 +33,7 @@ namespace _Project.Scripts
         public event Action<int> OnShotsChanged;
         public event Action<float> OnPlaytimeChanged;
         public Spawner Spawner => spawner;
+        public BallManager BallManager => ballManager;
 
         private void Awake()
         {
@@ -43,7 +46,7 @@ namespace _Project.Scripts
         private void Start()
         {
             OnGameStateChanged += ResetAll;
-            spawner.OnBallSpawnComplete += ball => ball.OnWon += AddPoint;
+            spawner.OnCueBallSpawnComplete += ball => ball.OnWon += AddPoint;
             spawner.OnCueSpawnComplete += handler => handler.OnShot += IncreaseShots;
             gameCanvasManager.OnClickStart += () => ChangeGameState(GameState.Play);
             gameCanvasManager.OnClickNewGame += () => ChangeGameState(GameState.Reset);
