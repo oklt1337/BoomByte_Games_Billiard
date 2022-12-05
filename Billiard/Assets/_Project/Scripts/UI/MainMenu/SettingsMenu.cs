@@ -10,7 +10,7 @@ namespace _Project.Scripts.UI.MainMenu
         [SerializeField] private Button backButton;
         [SerializeField] private Slider masterVolume;
 
-        internal Action OnBack;
+        internal event Action OnBack;
 
         private void Start()
         {
