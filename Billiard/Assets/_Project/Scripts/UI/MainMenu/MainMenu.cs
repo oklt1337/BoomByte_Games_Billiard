@@ -22,19 +22,23 @@ namespace _Project.Scripts.UI.MainMenu
 
         private void Awake()
         {
-            lastScore.SetActive(false);
+            startButton.onClick.AddListener(() => SceneManager.LoadScene("Game"));
+            settingsButton.onClick.AddListener(() => OnSettings?.Invoke());
+            exitButton.onClick.AddListener(Application.Quit);
         }
 
         private void Start()
         {
-            startButton.onClick.AddListener(() => SceneManager.LoadScene("Game"));
-            settingsButton.onClick.AddListener(() => OnSettings?.Invoke());
-            exitButton.onClick.AddListener(Application.Quit);
-            SaveManager.Instance.OnSaveFileLoaded += LoadLastGame;
+            var saveManager = SaveManager.Instance;
+            if (saveManager.LoadedSaveFile)
+                LoadLastGame(saveManager.GetSaveStats());
         }
 
         private void LoadLastGame(SaveStat saveStat)
         {
+            if (!saveStat.Validate())
+                return;
+            
             shots.text = saveStat.Shots.ToString();
             score.text = saveStat.Score.ToString();
             var timeSpan = TimeSpan.FromSeconds(saveStat.PlayTime);

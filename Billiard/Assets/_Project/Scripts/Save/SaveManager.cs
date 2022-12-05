@@ -11,14 +11,13 @@ namespace _Project.Scripts.Save
         public static SaveManager Instance { get; private set; }
 
         private SaveStat _lastSave;
-        private bool _loadedFiles;
 
         private readonly string _path = Path.Combine(
             Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Billiard");
 
         private const string FileName = "saveFile.json";
 
-        public event Action<SaveStat> OnSaveFileLoaded;
+        public bool LoadedSaveFile { get; private set; }
 
         private void Awake()
         {
@@ -30,13 +29,6 @@ namespace _Project.Scripts.Save
 
         private void Start()
         {
-            OnSaveFileLoaded += _ => _loadedFiles = true;
-            SceneManager.sceneLoaded += (scene, _) =>
-            {
-                if (scene.buildIndex == 0 && _loadedFiles)
-                    OnSaveFileLoaded?.Invoke(_lastSave);
-            };
-            
             LoadSaveFile();
         }
 
@@ -57,10 +49,11 @@ namespace _Project.Scripts.Save
                 SceneManager.LoadScene("MainMenu");
                 return;
             }
-                
+
 
             var filePath = Path.Combine(_path, FileName);
             _lastSave = JsonConvert.DeserializeObject<SaveStat>(File.ReadAllText(filePath));
+            LoadedSaveFile = true;
 
             SceneManager.LoadScene("MainMenu");
         }
@@ -72,6 +65,11 @@ namespace _Project.Scripts.Save
 
             var filePath = Path.Combine(_path, FileName);
             return File.Exists(filePath);
+        }
+
+        public SaveStat GetSaveStats()
+        {
+            return LoadedSaveFile ? _lastSave : new SaveStat(-1,-1,-1);
         }
     }
 
@@ -88,5 +86,10 @@ namespace _Project.Scripts.Save
         public int Score { get; }
         public int Shots { get; }
         public float PlayTime { get; }
+
+        public bool Validate()
+        {
+            return Score != -1 && Shots != -1 && Math.Abs(PlayTime - -1) > 0.01f;
+        }
     }
 }
