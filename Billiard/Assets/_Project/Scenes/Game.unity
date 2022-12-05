@@ -1413,7 +1413,7 @@ MonoBehaviour:
     type: 3}
   redBallPrefab: {fileID: 2892445176318567743, guid: fc420ef7f17ef9644a19d1f1f1614c96,
     type: 3}
-  cuePrefab: {fileID: 8554397350468477688, guid: 199c8ceccfe3a2746bc72042d6d56a9f,
+  cuePrefab: {fileID: 4302316456727639674, guid: 199c8ceccfe3a2746bc72042d6d56a9f,
     type: 3}
   whiteSpawnPos: {x: 0.3, y: 1.17, z: -1.08}
   yellowSpawnPos: {x: 0, y: 1.17, z: -1.08}
@@ -1624,6 +1624,50 @@ MonoBehaviour:
   m_FirstSelected: {fileID: 0}
   m_sendNavigationEvents: 1
   m_DragThreshold: 10
+--- !u!1 &622152569
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 622152570}
+  - component: {fileID: 622152571}
+  m_Layer: 0
+  m_Name: BallManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &622152570
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 622152569}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1536250535}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &622152571
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 622152569}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b7de5a66933548d3880e2dcd9797f197, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &674449393
 GameObject:
   m_ObjectHideFlags: 0
@@ -2279,6 +2323,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1164410450}
+  - component: {fileID: 1164410452}
   - component: {fileID: 1164410451}
   m_Layer: 0
   m_Name: LineController
@@ -2300,7 +2345,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1536250535}
-  m_RootOrder: 2
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!120 &1164410451
 LineRenderer:
@@ -2344,8 +2389,8 @@ LineRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_Positions:
-  - {x: 0.3, y: 1.17, z: -1.08}
-  - {x: 0, y: 1.17, z: 0.908}
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 0}
   m_Parameters:
     serializedVersion: 3
     widthMultiplier: 1
@@ -2366,8 +2411,8 @@ LineRenderer:
       m_RotationOrder: 4
     colorGradient:
       serializedVersion: 2
-      key0: {r: 1, g: 1, b: 1, a: 1}
-      key1: {r: 1, g: 1, b: 1, a: 1}
+      key0: {r: 0.024725825, g: 0, b: 0.9811321, a: 1}
+      key1: {r: 0.024725825, g: 0, b: 0.9811321, a: 1}
       key2: {r: 0, g: 0, b: 0, a: 0}
       key3: {r: 0, g: 0, b: 0, a: 0}
       key4: {r: 0, g: 0, b: 0, a: 0}
@@ -2401,6 +2446,19 @@ LineRenderer:
     generateLightingData: 0
   m_UseWorldSpace: 1
   m_Loop: 0
+--- !u!114 &1164410452
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1164410449}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a22dd2eeb40efb1409737d2b00d4dcc7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  lineRenderer: {fileID: 1164410451}
 --- !u!1 &1169923227
 GameObject:
   m_ObjectHideFlags: 0
@@ -2446,6 +2504,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   spawner: {fileID: 567986667}
+  ballManager: {fileID: 622152571}
   gameCanvasManager: {fileID: 1747371141}
 --- !u!1 &1230997745
 GameObject:
@@ -2754,6 +2813,7 @@ Transform:
   m_Children:
   - {fileID: 1169923228}
   - {fileID: 567986666}
+  - {fileID: 622152570}
   - {fileID: 1164410450}
   m_Father: {fileID: 0}
   m_RootOrder: 0

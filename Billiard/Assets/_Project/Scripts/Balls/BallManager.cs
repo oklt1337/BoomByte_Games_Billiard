@@ -31,6 +31,7 @@ namespace _Project.Scripts.Balls
             spawner.OnCueBallSpawnComplete += ball =>
             {
                 _cueBall = ball;
+                OnBallsStopped?.Invoke(_cueBall);
                 _cueBall.OnStop += () => StoppedBalls++;
             };
             spawner.OnYellowBallSpawnComplete += ball =>

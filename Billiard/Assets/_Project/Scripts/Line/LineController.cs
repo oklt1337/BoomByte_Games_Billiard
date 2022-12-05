@@ -1,27 +1,27 @@
 using System;
-using System.Collections.Generic;
 using UnityEngine;
+using Vector3 = UnityEngine.Vector3;
 
 namespace _Project.Scripts.Line
 {
     public class LineController : MonoBehaviour
     {
         [SerializeField] private LineRenderer lineRenderer;
-        private readonly List<Transform> _linePoints = new(3);
 
-
-        private void Start()
+        private readonly Vector3[] _pointsOfInterest = new Vector3[2];
+        
+        private void Awake()
         {
             var gameManager = GameManager.Instance;
             gameManager.Spawner.OnCueSpawnComplete +=
-                handler => handler.OnRotate += t => SetPoint(t, 0);
+                handler => handler.OnRotate += (direction) => { SetPoint(direction, 0); };
             gameManager.Spawner.OnCueSpawnComplete +=
                 handler => handler.OnShot += () => lineRenderer.enabled = false;
             gameManager.OnGameStateChanged += OnGameStateChange;
             gameManager.BallManager.OnBallsStopped += ball =>
             {
                 lineRenderer.enabled = true;
-                SetPoint(ball.transform, 1);
+                SetPoint(ball.transform.position, 1);
             };
         }
 
@@ -29,13 +29,8 @@ namespace _Project.Scripts.Line
         {
             if (!lineRenderer.enabled)
                 return;
-            if (_linePoints == null)
-                return;
 
-            for (var i = 0; i < _linePoints.Count; i++)
-            {
-                lineRenderer.SetPosition(i, _linePoints[i].position);
-            }
+            CalculatePoints();
         }
 
         private void OnGameStateChange(GameState gameState)
@@ -54,9 +49,43 @@ namespace _Project.Scripts.Line
             }
         }
 
-        private void SetPoint(Transform point, int index)
+        private void SetPoint(Vector3 point, int index)
         {
-            _linePoints[index] = point;
+            if (index >= _pointsOfInterest.Length)
+                return;
+            _pointsOfInterest[index] = point;
+        }
+
+        private void CalculatePoints()
+        {
+            if (_pointsOfInterest == null)
+                return;
+            const float radius = 0.03514923f;
+            
+            if (!Physics.CapsuleCast(_pointsOfInterest[1], _pointsOfInterest[1], radius, _pointsOfInterest[0],
+                    out var sphereHit)) return;
+            var ray = new Ray(_pointsOfInterest[1], _pointsOfInterest[0]);
+            if (sphereHit.collider.tag is "CueBall" or "RedBall" or "YellowBall")
+            {
+                if (!Physics.Raycast(ray, out var hit)) 
+                    return;
+                    
+                lineRenderer.startColor = Color.red;
+                lineRenderer.endColor = Color.red;
+
+                lineRenderer.SetPosition(0, _pointsOfInterest[1]);
+                lineRenderer.SetPosition(1, hit.point);
+            }
+            else
+            {
+                if (!Physics.Raycast(ray, out var hit)) 
+                    return;
+                lineRenderer.startColor = Color.blue;
+                lineRenderer.endColor = Color.blue;
+
+                lineRenderer.SetPosition(0, _pointsOfInterest[1]);
+                lineRenderer.SetPosition(1, hit.point);
+            }
         }
     }
 }

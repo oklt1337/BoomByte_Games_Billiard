@@ -16,7 +16,7 @@ namespace _Project.Scripts.Cue
         private bool _isMovable;
 
         public event Action<float> OnForceScale;
-        public event Action<Transform> OnRotate;
+        public event Action<Vector3> OnRotate;
         public event Action OnShot;
 
         private void Awake()
@@ -68,11 +68,14 @@ namespace _Project.Scripts.Cue
             var intensity = intensityMultiplier * _time;
             if (intensity > maxIntensity)
                 intensity = maxIntensity;
-
+            
+            var cueBallPosition = _cueBall.position;
             var tipPosition = tip.position;
-            var origin = new Vector3(tipPosition.x, _cueBall.position.y, tipPosition.z);
-
-            var ray = new Ray(origin, tip.forward);
+            var origin = new Vector3(tipPosition.x, cueBallPosition.y, tipPosition.z);
+            var dir = new Vector3(cueBallPosition.x - tipPosition.x, 0,
+                cueBallPosition.z - tipPosition.z);
+            
+            var ray = new Ray(origin, dir);
             if (Physics.Raycast(ray, out var hit, 1f))
             {
                 if (!hit.collider.CompareTag("CueBall"))
@@ -90,9 +93,14 @@ namespace _Project.Scripts.Cue
 
         private void Rotation(float direction)
         {
+            var cueBallPosition = _cueBall.position;
             transform.RotateAround(
-                _cueBall.position, Vector3.up, Time.deltaTime * sensitivity * direction);
-            OnRotate?.Invoke(tip);
+                cueBallPosition, Vector3.up, Time.deltaTime * sensitivity * direction);
+            
+            var tipPosition = tip.position;
+            var dir = new Vector3(cueBallPosition.x - tipPosition.x, 0,
+                cueBallPosition.z - tipPosition.z);
+            OnRotate?.Invoke(dir);
         }
 
         private bool ViewPortCheck()
