@@ -5,7 +5,7 @@ namespace _Project.Scripts.Cue
 {
     public class CueHandler : MonoBehaviour
     {
-        [SerializeField] private Transform tip;
+        [SerializeField] private GameObject model;
         [SerializeField] private float sensitivity = 50f;
         [SerializeField] private float intensityMultiplier = 25f;
         [SerializeField] private float maxIntensity = 150f;
@@ -21,7 +21,18 @@ namespace _Project.Scripts.Cue
 
         private void Awake()
         {
-            GameManager.Instance.Spawner.OnCueBallSpawnComplete += ball => _cueBall = ball.transform;
+            GameManager.Instance.Spawner.OnCueBallSpawnComplete += ball =>
+            {
+                _cueBall = ball.transform;
+                Reposition();
+            };
+            GameManager.Instance.BallManager.OnBallsStopped += ball =>
+            {
+                _cueBall = ball.transform;
+                Reposition();
+                _isMovable = true;
+                model.SetActive(true);
+            };
             GameManager.Instance.OnGameStateChanged += state => _isMovable = state == GameState.Play;
         }
 
@@ -68,13 +79,13 @@ namespace _Project.Scripts.Cue
             var intensity = intensityMultiplier * _time;
             if (intensity > maxIntensity)
                 intensity = maxIntensity;
-            
+
             var cueBallPosition = _cueBall.position;
-            var tipPosition = tip.position;
+            var tipPosition = transform.position;
             var origin = new Vector3(tipPosition.x, cueBallPosition.y, tipPosition.z);
             var dir = new Vector3(cueBallPosition.x - tipPosition.x, 0,
                 cueBallPosition.z - tipPosition.z);
-            
+
             var ray = new Ray(origin, dir);
             if (Physics.Raycast(ray, out var hit, 1f))
             {
@@ -84,6 +95,8 @@ namespace _Project.Scripts.Cue
                 var direction = hit.point - origin;
                 hit.rigidbody.AddForceAtPosition(direction.normalized * intensity, hit.point);
 
+                model.SetActive(false);
+                _isMovable = false;
                 OnShot?.Invoke();
             }
 
@@ -94,10 +107,11 @@ namespace _Project.Scripts.Cue
         private void Rotation(float direction)
         {
             var cueBallPosition = _cueBall.position;
-            transform.RotateAround(
+            var myTransform = transform;
+            myTransform.RotateAround(
                 cueBallPosition, Vector3.up, Time.deltaTime * sensitivity * direction);
-            
-            var tipPosition = tip.position;
+
+            var tipPosition = myTransform.position;
             var dir = new Vector3(cueBallPosition.x - tipPosition.x, 0,
                 cueBallPosition.z - tipPosition.z);
             OnRotate?.Invoke(dir);
@@ -107,6 +121,22 @@ namespace _Project.Scripts.Cue
         {
             var view = _camera.ScreenToViewportPoint(Input.mousePosition);
             return view.x is < 0 or > 1 || view.y is < 0 or > 1;
+        }
+
+        private void Reposition()
+        {
+            var myTransform = transform;
+            var ballPosition = _cueBall.position;
+            var rotation = Quaternion.Euler(0,0,0);
+
+            myTransform.position = new Vector3(ballPosition.x, ballPosition.y, ballPosition.z - 0.05f);
+            transform.rotation = rotation;
+            
+            var tipPosition = myTransform.position;
+            var dir = new Vector3(ballPosition.x - tipPosition.x, 0,
+                ballPosition.z - tipPosition.z);
+            
+            OnRotate?.Invoke(dir);
         }
     }
 }

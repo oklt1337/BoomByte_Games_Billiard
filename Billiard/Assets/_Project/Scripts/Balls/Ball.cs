@@ -8,18 +8,18 @@ namespace _Project.Scripts.Balls
     {
         [SerializeField] private Rigidbody rb;
 
-        private bool _moving;
+        public bool Moving { get; private set; }
+        
         public event Action OnStop;
-
+        
         private void Update()
         {
             if (rb.velocity != Vector3.zero)
-                _moving = true;
+                Moving = true;
 
-            if (rb.velocity != Vector3.zero || !_moving)
+            if (rb.velocity != Vector3.zero || !Moving) 
                 return;
-
-            _moving = false;
+            Moving = false;
             OnStop?.Invoke();
         }
 

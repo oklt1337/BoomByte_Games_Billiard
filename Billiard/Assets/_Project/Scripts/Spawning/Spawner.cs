@@ -19,7 +19,7 @@ namespace _Project.Scripts.Spawning
 
         private GameObject _whiteBall;
         private GameObject _yellowBall;
-        private GameObject _redBall;
+        private GameObject _redBall; 
         private GameObject _cue;
 
         public event Action<CueBall> OnCueBallSpawnComplete;
@@ -29,39 +29,36 @@ namespace _Project.Scripts.Spawning
 
         private void Awake()
         {
-            GameManager.Instance.OnGameStateChanged += DeleteBalls;
-            GameManager.Instance.OnGameStateChanged += SpawnBalls;
+            GameManager.Instance.OnGameStateChanged += OnGameStateChange;
+            GameManager.Instance.BallManager.OnBallRespawn += SpawnObjects;
         }
 
-        private void DeleteBalls(GameState gameState)
-        {
-            if (gameState != GameState.Reset)
-                return;
-
-            if (_whiteBall != null)
-                Destroy(_whiteBall);
-            if (_yellowBall != null)
-                Destroy(_yellowBall);
-            if (_redBall != null)
-                Destroy(_redBall);
-            if (_cue != null)
-                Destroy(_cue);
-        }
-
-        private void SpawnBalls(GameState gameState)
+        private void OnGameStateChange(GameState gameState)
         {
             if (gameState != GameState.Reset)
                 return;
             
+            if (_cue != null)
+                Destroy(_cue);
+
+            SpawnObjects();
+        }
+
+        private void SpawnObjects()
+        {
             _whiteBall = Instantiate(whiteBallPrefab, whiteSpawnPos, Quaternion.identity);
             _yellowBall = Instantiate(yellowBallPrefab, yellowSpawnPos, Quaternion.identity);
             _redBall = Instantiate(redBallPrefab, redSpawnPos, Quaternion.identity);
-            _cue = Instantiate(cuePrefab, cueSpawnPos, cuePrefab.transform.rotation);
+
+            if (_cue == null)
+            {
+                _cue = Instantiate(cuePrefab, cueSpawnPos, cuePrefab.transform.rotation);
+                OnCueSpawnComplete?.Invoke(_cue.GetComponent<CueHandler>());
+            }
             
             OnCueBallSpawnComplete?.Invoke(_whiteBall.GetComponent<CueBall>());
             OnYellowBallSpawnComplete?.Invoke(_yellowBall.GetComponent<Ball>());
             OnRedBallSpawnComplete?.Invoke(_redBall.GetComponent<Ball>());
-            OnCueSpawnComplete?.Invoke(_cue.GetComponent<CueHandler>());
         }
     }
 }

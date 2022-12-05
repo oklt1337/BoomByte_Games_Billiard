@@ -86,6 +86,9 @@ namespace _Project.Scripts
 
         private void Won()
         {
+            if (_gameState == GameState.Won)
+                return;
+            
             ChangeGameState(GameState.Won);
             SaveManager.Instance.SaveStats(new SaveStat(_score, _shots, _playtime));
         }

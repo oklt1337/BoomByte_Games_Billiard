@@ -11,24 +11,18 @@ namespace _Project.Scripts.Balls
         [SerializeField] private bool yellow;
         [SerializeField] private bool red;
 
-        private bool _moving;
-        
+        public bool Moving { get; private set; }
         public event Action OnWon;
         public event Action OnStop;
 
         private void Update()
         {
-            if (Input.GetKey(KeyCode.Q))
-            {
-                OnWon?.Invoke();
-            }
-            
             if (rb.velocity != Vector3.zero)
-                _moving = true;
+                Moving = true;
 
-            if (rb.velocity == Vector3.zero && _moving)
+            if (rb.velocity == Vector3.zero && Moving)
             {
-                _moving = false;
+                Moving = false;
                 yellow = false;
                 red = false;
                 OnStop?.Invoke();

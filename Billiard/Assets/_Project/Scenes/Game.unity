@@ -1418,7 +1418,7 @@ MonoBehaviour:
   whiteSpawnPos: {x: 0.3, y: 1.17, z: -1.08}
   yellowSpawnPos: {x: 0, y: 1.17, z: -1.08}
   redSpawnPos: {x: 0, y: 1.17, z: 0.908}
-  cueSpawnPos: {x: 0.3, y: 1.29, z: -2.947}
+  cueSpawnPos: {x: 0.3, y: 1.17, z: -1.13}
 --- !u!1 &569803323
 GameObject:
   m_ObjectHideFlags: 0
