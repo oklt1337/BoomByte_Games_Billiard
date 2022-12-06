@@ -7,28 +7,35 @@ namespace _Project.Scripts.Balls
     public class CueBall : MonoBehaviour
     {
         [SerializeField] private Rigidbody rb;
-
-        [SerializeField] private bool yellow;
-        [SerializeField] private bool red;
+        
+        private Vector3 _startPos;
+        private bool _yellow;
+        private bool _red;
 
         public bool Moving { get; private set; }
         public event Action OnWon;
         public event Action OnStop;
+        
+        private void Awake()
+        {
+            _startPos = transform.position;
+        }
 
         private void Update()
         {
             if (rb.velocity != Vector3.zero)
                 Moving = true;
 
-            if (rb.velocity == Vector3.zero && Moving)
+            if (rb.velocity != Vector3.zero || !Moving) 
+                return;
+
+            if (!(_red && _yellow))
             {
-                Moving = false;
-                yellow = false;
-                red = false;
-                OnStop?.Invoke();
+                _yellow = false;
+                _red = false;
             }
-            else
-                CheckWin();
+            Moving = false;
+            OnStop?.Invoke();
         }
 
         private void OnCollisionEnter(Collision collision)
@@ -41,18 +48,28 @@ namespace _Project.Scripts.Balls
 
             if (collision.gameObject.CompareTag("YellowBall"))
             {
-                yellow = true;
+                _yellow = true;
             }
             else if (collision.gameObject.CompareTag("RedBall"))
             {
-                red = true;
+                _red = true;
             }
         }
 
-        private void CheckWin()
+        public bool CheckWin()
         {
-            if (red && yellow)
+            if (_red && _yellow) 
                 OnWon?.Invoke();
+
+            return _red && _yellow;
+        }
+
+        public void ResetPosition()
+        {
+            _yellow = false;
+            _red = false;
+            rb.velocity = Vector3.zero;
+            transform.position = _startPos;
         }
     }
 }

@@ -10,6 +10,7 @@ namespace _Project.Scripts.UI.Game
         [Header("GamePlayPanel")]
         [SerializeField] private GameObject gamePlayPanel;
         [SerializeField] private Button startButton;
+        [SerializeField] private Button replayButton;
         [SerializeField] private Slider forceSlider;
         [SerializeField] private TMP_Text shots;
         [SerializeField] private TMP_Text score;
@@ -26,13 +27,20 @@ namespace _Project.Scripts.UI.Game
         private Image _forceFillImage;
 
         public event Action OnClickStart;
+        public event Action OnClickReplay;
         public event Action OnClickNewGame;
         public event Action OnClickMainMenu;
 
         private void Awake()
         {
             _forceFillImage = forceSlider.fillRect.GetComponent<Image>();
-            GameManager.Instance.Spawner.OnCueSpawnComplete += handler => handler.OnForceScale += UpdateForce;
+            GameManager.Instance.Spawner.OnCueSpawnComplete += handler =>
+            {
+                handler.OnForceScale += UpdateForce;
+                handler.OnShot += () => replayButton.gameObject.SetActive(false);
+            };
+            GameManager.Instance.BallManager.OnBallReposition += () => replayButton.gameObject.SetActive(true);
+            GameManager.Instance.BallManager.OnBallsStopped += _ => replayButton.gameObject.SetActive(true);
             GameManager.Instance.OnPointsChanged += i => score.text = i.ToString();
             GameManager.Instance.OnShotsChanged += i => shots.text = i.ToString();
             GameManager.Instance.OnPlaytimeChanged += f =>
@@ -43,6 +51,7 @@ namespace _Project.Scripts.UI.Game
             GameManager.Instance.OnGameStateChanged += GameStateChanged;
             
             startButton.onClick.AddListener(() => OnClickStart?.Invoke());
+            replayButton.onClick.AddListener(() => OnClickReplay?.Invoke());
             mainMenuButton.onClick.AddListener(() => OnClickMainMenu?.Invoke());
             newGameButton.onClick.AddListener(() => OnClickNewGame?.Invoke());
             ResetForceSlider();
@@ -53,6 +62,7 @@ namespace _Project.Scripts.UI.Game
             switch (gameState)
             {
                 case GameState.Play:
+                    replayButton.gameObject.SetActive(true);
                     startButton.gameObject.SetActive(false);
                     break;
                 case GameState.Reset:
@@ -73,6 +83,9 @@ namespace _Project.Scripts.UI.Game
                     finalShots.text = shots.text;
                     finalScore.text = score.text;
                     finalPlaytime.text = playtime.text;
+                    break;
+                case GameState.Replay:
+                    replayButton.gameObject.SetActive(false);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(gameState), gameState, null);

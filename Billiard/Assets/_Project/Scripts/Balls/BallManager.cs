@@ -11,7 +11,7 @@ namespace _Project.Scripts.Balls
 
         private int _stoppedBalls;
         public event Action<CueBall> OnBallsStopped;
-        public event Action OnBallRespawn;
+        public event Action OnBallReposition;
 
         private void Awake()
         {
@@ -37,27 +37,26 @@ namespace _Project.Scripts.Balls
             {
                 if (points <= 0)
                     return;
-                DestroyBalls();
-                OnBallRespawn?.Invoke();
+                
+                ResetBallPositions();
+                OnBallReposition?.Invoke();
             };
         }
 
         private void CheckBalls()
         {
-            if (!_yellowBall.Moving && !_redBall.Moving && !_cueBall.Moving)
+            if (_yellowBall.Moving || _redBall.Moving || _cueBall.Moving)
+                return;
+
+            if (!_cueBall.CheckWin())
                 OnBallsStopped?.Invoke(_cueBall);
         }
 
-        private void DestroyBalls()
+        private void ResetBallPositions()
         {
-            if (_cueBall != null)
-                Destroy(_cueBall.gameObject);
-            if (_yellowBall != null)
-                Destroy(_yellowBall.gameObject);
-            if (_redBall != null)
-                Destroy(_redBall);
-            if (_redBall != null)
-                Destroy(_redBall.gameObject);
+            _cueBall.ResetPosition();
+            _yellowBall.ResetPosition();
+            _redBall.ResetPosition();
         }
     }
 }

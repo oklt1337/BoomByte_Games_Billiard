@@ -30,7 +30,6 @@ namespace _Project.Scripts.Spawning
         private void Awake()
         {
             GameManager.Instance.OnGameStateChanged += OnGameStateChange;
-            GameManager.Instance.BallManager.OnBallRespawn += SpawnObjects;
         }
 
         private void OnGameStateChange(GameState gameState)

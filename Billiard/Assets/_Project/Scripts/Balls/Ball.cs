@@ -12,6 +12,13 @@ namespace _Project.Scripts.Balls
         
         public event Action OnStop;
         
+        private Vector3 _startPos;
+        
+        private void Awake()
+        {
+            _startPos = transform.position;
+        }
+        
         private void Update()
         {
             if (rb.velocity != Vector3.zero)
@@ -30,6 +37,12 @@ namespace _Project.Scripts.Balls
 
             if (AudioManager.Instance != null)
                 AudioManager.Instance.PlayHitClip(rb.velocity.magnitude);
+        }
+        
+        public void ResetPosition()
+        {
+            rb.velocity = Vector3.zero;
+            transform.position = _startPos;
         }
     }
 }

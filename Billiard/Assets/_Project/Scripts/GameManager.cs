@@ -11,6 +11,7 @@ namespace _Project.Scripts
     public enum GameState
     {
         Play,
+        Replay,
         Reset,
         Won
     }
@@ -49,6 +50,7 @@ namespace _Project.Scripts
             spawner.OnCueBallSpawnComplete += ball => ball.OnWon += AddPoint;
             spawner.OnCueSpawnComplete += handler => handler.OnShot += IncreaseShots;
             gameCanvasManager.OnClickStart += () => ChangeGameState(GameState.Play);
+            gameCanvasManager.OnClickReplay += () => ChangeGameState(GameState.Replay);
             gameCanvasManager.OnClickNewGame += () => ChangeGameState(GameState.Reset);
             gameCanvasManager.OnClickMainMenu += () => SceneManager.LoadScene("MainMenu");
             
@@ -72,10 +74,17 @@ namespace _Project.Scripts
 
         private void AddPoint()
         {
-            _score++;
-            OnPointsChanged?.Invoke(_score);
-            if (_score >= 3)
-                Won();
+            if (_gameState == GameState.Replay)
+            {
+                ChangeGameState(GameState.Play);
+            }
+            else
+            {
+                _score++;
+                OnPointsChanged?.Invoke(_score);
+                if (_score >= 3)
+                    Won();
+            }
         }
         
         private void IncreaseShots()
@@ -90,7 +99,9 @@ namespace _Project.Scripts
                 return;
             
             ChangeGameState(GameState.Won);
-            SaveManager.Instance.SaveStats(new SaveStat(_score, _shots, _playtime));
+            
+            if (SaveManager.Instance != null)
+                SaveManager.Instance.SaveStats(new SaveStat(_score, _shots, _playtime));
         }
 
         private void ResetAll(GameState gameState)
@@ -105,6 +116,14 @@ namespace _Project.Scripts
             OnPointsChanged?.Invoke(_score);
             OnShotsChanged?.Invoke(_shots);
             OnPlaytimeChanged?.Invoke(_playtime);
+        }
+
+        public void ReplayFinished()
+        {
+            if (_gameState != GameState.Replay)
+                return;
+            
+            ChangeGameState(GameState.Play);
         }
     }
 }

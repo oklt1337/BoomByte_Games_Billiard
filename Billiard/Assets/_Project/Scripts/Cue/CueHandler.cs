@@ -14,7 +14,6 @@ namespace _Project.Scripts.Cue
         private Transform _cueBall;
         private float _time;
         private bool _isMovable;
-
         public event Action<float> OnForceScale;
         public event Action<Vector3> OnRotate;
         public event Action OnShot;
@@ -33,7 +32,34 @@ namespace _Project.Scripts.Cue
                 _isMovable = true;
                 model.SetActive(true);
             };
-            GameManager.Instance.OnGameStateChanged += state => _isMovable = state == GameState.Play;
+            GameManager.Instance.BallManager.OnBallReposition += () =>
+            {
+                Reposition();
+                _isMovable = true;
+                model.SetActive(true);
+            };
+            GameManager.Instance.OnGameStateChanged += InstanceOnOnGameStateChanged;
+        }
+
+        private void InstanceOnOnGameStateChanged(GameState gameState)
+        {
+            switch (gameState)
+            {
+                case GameState.Replay:
+                    _isMovable = false;
+                    model.SetActive(false);
+                    break;
+                case GameState.Play:
+                    _isMovable = true;
+                    model.SetActive(true);
+                    break;
+                case GameState.Reset:
+                    break;
+                case GameState.Won:
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(gameState), gameState, null);
+            }
         }
 
         private void Start()

@@ -1,4 +1,5 @@
 using System;
+using _Project.Scripts.Balls;
 using UnityEngine;
 using Vector3 = UnityEngine.Vector3;
 
@@ -9,6 +10,8 @@ namespace _Project.Scripts.Line
         [SerializeField] private LineRenderer lineRenderer;
 
         private readonly Vector3[] _pointsOfInterest = new Vector3[2];
+
+        private CueBall _cueBall;
         
         private void Awake()
         {
@@ -21,7 +24,13 @@ namespace _Project.Scripts.Line
             gameManager.BallManager.OnBallsStopped += ball =>
             {
                 lineRenderer.enabled = true;
-                SetPoint(ball.transform.position, 1);
+                _cueBall = ball;
+                SetPoint(_cueBall.transform.position, 1);
+            };
+            gameManager.BallManager.OnBallReposition += () =>
+            {
+                lineRenderer.enabled = true;
+                SetPoint(_cueBall.transform.position, 1);
             };
         }
 
@@ -40,6 +49,7 @@ namespace _Project.Scripts.Line
                 case GameState.Play:
                     lineRenderer.enabled = true;
                     break;
+                case GameState.Replay:
                 case GameState.Reset:
                 case GameState.Won:
                     lineRenderer.enabled = false;
