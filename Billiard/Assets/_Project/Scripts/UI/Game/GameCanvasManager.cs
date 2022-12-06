@@ -1,6 +1,7 @@
 ﻿using System;
 using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 namespace _Project.Scripts.UI.Game
@@ -73,8 +74,12 @@ namespace _Project.Scripts.UI.Game
             switch (gameState)
             {
                 case GameState.Play:
-                    if (int.TryParse(shots.text, out var shot) && shot > 0) 
+                    if (int.TryParse(shots.text, out var shot) && shot > 0)
+                    {
                         replayButton.gameObject.SetActive(true);
+                        EventSystem.current.SetSelectedGameObject(null);
+                    } 
+                        
                     startButton.gameObject.SetActive(false);
                     break;
                 case GameState.Init:

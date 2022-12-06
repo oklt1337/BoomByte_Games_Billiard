@@ -12,7 +12,7 @@ namespace _Project.Scripts.Line
         private readonly Vector3[] _pointsOfInterest = new Vector3[2];
 
         private CueBall _cueBall;
-        
+
         private void Awake()
         {
             var gameManager = GameManager.Instance;
@@ -23,12 +23,16 @@ namespace _Project.Scripts.Line
             gameManager.OnGameStateChanged += OnGameStateChange;
             gameManager.BallManager.OnBallsStopped += ball =>
             {
+                if (GameManager.Instance.GameState == GameState.Won)
+                    return;
                 lineRenderer.enabled = true;
                 _cueBall = ball;
                 SetPoint(_cueBall.transform.position, 1);
             };
             gameManager.BallManager.OnBallReposition += () =>
             {
+                if (GameManager.Instance.GameState == GameState.Won)
+                    return;
                 lineRenderer.enabled = true;
                 SetPoint(_cueBall.transform.position, 1);
             };
@@ -71,15 +75,15 @@ namespace _Project.Scripts.Line
             if (_pointsOfInterest == null)
                 return;
             const float radius = 0.03514923f;
-            
+
             if (!Physics.CapsuleCast(_pointsOfInterest[1], _pointsOfInterest[1], radius, _pointsOfInterest[0],
                     out var sphereHit)) return;
             var ray = new Ray(_pointsOfInterest[1], _pointsOfInterest[0]);
             if (sphereHit.collider.tag is "CueBall" or "RedBall" or "YellowBall")
             {
-                if (!Physics.Raycast(ray, out var hit)) 
+                if (!Physics.Raycast(ray, out var hit))
                     return;
-                    
+
                 lineRenderer.startColor = Color.red;
                 lineRenderer.endColor = Color.red;
 
@@ -88,7 +92,7 @@ namespace _Project.Scripts.Line
             }
             else
             {
-                if (!Physics.Raycast(ray, out var hit)) 
+                if (!Physics.Raycast(ray, out var hit))
                     return;
                 lineRenderer.startColor = Color.blue;
                 lineRenderer.endColor = Color.blue;

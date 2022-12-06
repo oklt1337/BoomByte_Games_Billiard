@@ -28,23 +28,27 @@ namespace _Project.Scripts.Cue
             GameManager.Instance.BallManager.OnBallsStopped += ball =>
             {
                 _cueBall = ball.transform;
-                Reposition();
+                if (GameManager.Instance.GameState == GameState.Won)
+                    return;
                 _isMovable = true;
                 model.SetActive(true);
             };
             GameManager.Instance.BallManager.OnBallReposition += () =>
             {
                 Reposition();
+                if (GameManager.Instance.GameState == GameState.Won)
+                    return;
                 _isMovable = true;
                 model.SetActive(true);
             };
-            GameManager.Instance.OnGameStateChanged += InstanceOnOnGameStateChanged;
+            GameManager.Instance.OnGameStateChanged += OnOnGameStateChanged;
         }
 
-        private void InstanceOnOnGameStateChanged(GameState gameState)
+        private void OnOnGameStateChanged(GameState gameState)
         {
             switch (gameState)
             {
+                case GameState.Won:
                 case GameState.Replay:
                     _isMovable = false;
                     model.SetActive(false);
@@ -54,8 +58,6 @@ namespace _Project.Scripts.Cue
                     model.SetActive(true);
                     break;
                 case GameState.Init:
-                    break;
-                case GameState.Won:
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(gameState), gameState, null);

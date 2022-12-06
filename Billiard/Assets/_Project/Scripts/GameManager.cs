@@ -1,4 +1,5 @@
 using System;
+using _Project.Scripts.Audio;
 using _Project.Scripts.Balls;
 using _Project.Scripts.Save;
 using _Project.Scripts.Spawning;
@@ -13,7 +14,6 @@ namespace _Project.Scripts
         Play,
         Replay,
         Init,
-        Reset,
         Won
     }
     [DefaultExecutionOrder(-100)]
@@ -24,8 +24,7 @@ namespace _Project.Scripts
         [SerializeField] private Spawner spawner;
         [SerializeField] private BallManager ballManager;
         [SerializeField] private GameCanvasManager gameCanvasManager;
-        
-        private GameState _gameState;
+
         private int _score;
         private int _shots;
         private float _playtime;
@@ -36,6 +35,7 @@ namespace _Project.Scripts
         public event Action<float> OnPlaytimeChanged;
         public Spawner Spawner => spawner;
         public BallManager BallManager => ballManager;
+        public GameState GameState { get; private set; }
 
         private void Awake()
         {
@@ -60,7 +60,7 @@ namespace _Project.Scripts
 
         private void Update()
         {
-            if (_gameState != GameState.Play) 
+            if (GameState != GameState.Play) 
                 return;
             
             _playtime += Time.deltaTime;
@@ -69,13 +69,13 @@ namespace _Project.Scripts
 
         private void ChangeGameState(GameState gameState)
         {
-            _gameState = gameState;
-            OnGameStateChanged?.Invoke(_gameState);
+            GameState = gameState;
+            OnGameStateChanged?.Invoke(GameState);
         }
 
         private void AddPoint()
         {
-            if (_gameState == GameState.Replay)
+            if (GameState == GameState.Replay)
             {
                 ChangeGameState(GameState.Play);
             }
@@ -96,10 +96,12 @@ namespace _Project.Scripts
 
         private void Won()
         {
-            if (_gameState == GameState.Won)
+            if (GameState == GameState.Won)
                 return;
             
             ChangeGameState(GameState.Won);
+            
+            AudioManager.Instance.PlayVictory();
             
             if (SaveManager.Instance != null)
                 SaveManager.Instance.SaveStats(new SaveStat(_score, _shots, _playtime));
@@ -121,7 +123,7 @@ namespace _Project.Scripts
 
         public void ReplayFinished()
         {
-            if (_gameState != GameState.Replay)
+            if (GameState != GameState.Replay)
                 return;
             
             ChangeGameState(GameState.Play);
