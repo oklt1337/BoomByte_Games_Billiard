@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 namespace _Project.Scripts.Replay
@@ -56,7 +55,7 @@ namespace _Project.Scripts.Replay
                     break;
                 case GameState.Play:
                     break;
-                case GameState.Reset:
+                case GameState.Init:
                     break;
                 case GameState.Won:
                     break;

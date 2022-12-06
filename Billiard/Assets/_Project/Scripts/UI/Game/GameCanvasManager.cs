@@ -25,7 +25,6 @@ namespace _Project.Scripts.UI.Game
         [SerializeField] private TMP_Text finalPlaytime;
         
         private Image _forceFillImage;
-
         public event Action OnClickStart;
         public event Action OnClickReplay;
         public event Action OnClickNewGame;
@@ -37,10 +36,22 @@ namespace _Project.Scripts.UI.Game
             GameManager.Instance.Spawner.OnCueSpawnComplete += handler =>
             {
                 handler.OnForceScale += UpdateForce;
-                handler.OnShot += () => replayButton.gameObject.SetActive(false);
+                handler.OnShot += () =>
+                {
+                    replayButton.gameObject.SetActive(false);
+                    ResetForceSlider();
+                };
             };
-            GameManager.Instance.BallManager.OnBallReposition += () => replayButton.gameObject.SetActive(true);
-            GameManager.Instance.BallManager.OnBallsStopped += _ => replayButton.gameObject.SetActive(true);
+            GameManager.Instance.BallManager.OnBallReposition += () =>
+            {
+                if (int.TryParse(shots.text, out var shot) && shot > 0) 
+                    replayButton.gameObject.SetActive(true);
+            };
+            GameManager.Instance.BallManager.OnBallsStopped += _ =>
+            {
+                if (int.TryParse(shots.text, out var shot) && shot > 0) 
+                    replayButton.gameObject.SetActive(true);
+            };
             GameManager.Instance.OnPointsChanged += i => score.text = i.ToString();
             GameManager.Instance.OnShotsChanged += i => shots.text = i.ToString();
             GameManager.Instance.OnPlaytimeChanged += f =>
@@ -62,10 +73,11 @@ namespace _Project.Scripts.UI.Game
             switch (gameState)
             {
                 case GameState.Play:
-                    replayButton.gameObject.SetActive(true);
+                    if (int.TryParse(shots.text, out var shot) && shot > 0) 
+                        replayButton.gameObject.SetActive(true);
                     startButton.gameObject.SetActive(false);
                     break;
-                case GameState.Reset:
+                case GameState.Init:
                     ResetForceSlider();
                     
                     startButton.gameObject.SetActive(true);

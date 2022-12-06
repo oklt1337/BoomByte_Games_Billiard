@@ -34,7 +34,7 @@ namespace _Project.Scripts.Spawning
 
         private void OnGameStateChange(GameState gameState)
         {
-            if (gameState != GameState.Reset)
+            if (gameState != GameState.Init)
                 return;
             
             if (_cue != null)

@@ -12,6 +12,7 @@ namespace _Project.Scripts
     {
         Play,
         Replay,
+        Init,
         Reset,
         Won
     }
@@ -51,10 +52,10 @@ namespace _Project.Scripts
             spawner.OnCueSpawnComplete += handler => handler.OnShot += IncreaseShots;
             gameCanvasManager.OnClickStart += () => ChangeGameState(GameState.Play);
             gameCanvasManager.OnClickReplay += () => ChangeGameState(GameState.Replay);
-            gameCanvasManager.OnClickNewGame += () => ChangeGameState(GameState.Reset);
+            gameCanvasManager.OnClickNewGame += () => SceneManager.LoadScene("Game");
             gameCanvasManager.OnClickMainMenu += () => SceneManager.LoadScene("MainMenu");
             
-            ChangeGameState(GameState.Reset);
+            ChangeGameState(GameState.Init);
         }
 
         private void Update()
@@ -106,7 +107,7 @@ namespace _Project.Scripts
 
         private void ResetAll(GameState gameState)
         {
-            if (gameState != GameState.Reset)
+            if (gameState != GameState.Init)
                 return;
             
             _score = 0;

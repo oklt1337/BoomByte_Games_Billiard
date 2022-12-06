@@ -50,7 +50,7 @@ namespace _Project.Scripts.Line
                     lineRenderer.enabled = true;
                     break;
                 case GameState.Replay:
-                case GameState.Reset:
+                case GameState.Init:
                 case GameState.Won:
                     lineRenderer.enabled = false;
                     break;

@@ -53,7 +53,7 @@ namespace _Project.Scripts.Cue
                     _isMovable = true;
                     model.SetActive(true);
                     break;
-                case GameState.Reset:
+                case GameState.Init:
                     break;
                 case GameState.Won:
                     break;
@@ -65,6 +65,8 @@ namespace _Project.Scripts.Cue
         private void Start()
         {
             _camera = Camera.main;
+            _isMovable = false;
+            model.SetActive(false);
         }
 
         private void Update()
