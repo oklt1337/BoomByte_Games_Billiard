@@ -11,6 +11,7 @@ namespace _Project.Scripts.UI.Game
         [Header("GamePlayPanel")]
         [SerializeField] private GameObject gamePlayPanel;
         [SerializeField] private Button startButton;
+        [SerializeField] private Button quitButton;
         [SerializeField] private Button replayButton;
         [SerializeField] private Slider forceSlider;
         [SerializeField] private TMP_Text shots;
@@ -33,6 +34,7 @@ namespace _Project.Scripts.UI.Game
 
         private void Awake()
         {
+            quitButton.onClick.AddListener(Application.Quit);
             _forceFillImage = forceSlider.fillRect.GetComponent<Image>();
             GameManager.Instance.Spawner.OnCueSpawnComplete += handler =>
             {
