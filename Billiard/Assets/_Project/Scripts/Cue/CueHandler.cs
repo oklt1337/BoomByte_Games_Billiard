@@ -30,6 +30,7 @@ namespace _Project.Scripts.Cue
                 _cueBall = ball.transform;
                 if (GameManager.Instance.GameState == GameState.Won)
                     return;
+                Reposition();
                 _isMovable = true;
                 model.SetActive(true);
             };
